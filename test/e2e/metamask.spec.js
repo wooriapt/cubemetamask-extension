@@ -5,7 +5,7 @@ const assert = require('assert')
 const pify = require('pify')
 const webdriver = require('selenium-webdriver')
 const { By, Key, until } = webdriver
-const { waitUntilXWindowHandles, switchToWindowWithTitle } = require('./beta/helpers.js')
+const { switchToWindowWithTitle } = require('./beta/helpers.js')
 const { delay, buildChromeWebDriver, buildFirefoxWebdriver, installWebExt, getExtensionIdChrome, getExtensionIdFirefox } = require('./func')
 
 describe('Metamask popup page', function () {

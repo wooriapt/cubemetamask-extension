@@ -5,6 +5,7 @@ const assert = require('assert')
 const pify = require('pify')
 const webdriver = require('selenium-webdriver')
 const { By, Key, until } = webdriver
+const { switchToWindowWithTitle } = require('./beta/helpers.js')
 const { delay, buildChromeWebDriver, buildFirefoxWebdriver, installWebExt, getExtensionIdChrome, getExtensionIdFirefox } = require('./func')
 
 describe('Metamask popup page', function () {
@@ -134,12 +135,12 @@ describe('Metamask popup page', function () {
 
     it('adds a second account', async function () {
       await driver.findElement(By.css('#app-content > div > div.full-width > div > div:nth-child(2) > span > div')).click()
-      await delay(300)
+      await delay(1000)
       await driver.findElement(By.css('#app-content > div > div.full-width > div > div:nth-child(2) > span > div > div > span > div > li:nth-child(3) > span')).click()
     })
 
     it('shows account address', async function () {
-      await delay(300)
+      await delay(1000)
       accountAddress = await driver.findElement(By.css('#app-content > div > div.app-primary.from-left > div > div > div:nth-child(1) > flex-column > div.flex-row > div')).getText()
     })
 
@@ -159,7 +160,7 @@ describe('Metamask popup page', function () {
     })
 
     it('shows QR code option', async () => {
-      await delay(300)
+      await delay(1000)
       await driver.findElement(By.css('.fa-ellipsis-h')).click()
       await driver.findElement(By.css('#app-content > div > div.app-primary.from-right > div > div > div:nth-child(1) > flex-column > div.name-label > div > span > i > div > div > li:nth-child(3)')).click()
       await delay(300)
@@ -235,7 +236,7 @@ describe('Metamask popup page', function () {
 
       submitButton.click()
 
-      await delay(500)
+      await delay(2000)
     })
 
     it('finds the transaction in the transactions list', async function () {
@@ -244,16 +245,17 @@ describe('Metamask popup page', function () {
     })
   })
 
-  describe('Token Factory', function () {
+  describe('Sends token from dapp', function () {
 
-    it('navigates to token factory', async function () {
-      // await driver.get('http://tokenfactory.surge.sh/')
-      // TODO: Switch off of this custom-hosted Token Factory instace
-      // once EIP-1102 support lands upstream
-      await driver.get('https://token-factory-akfgedomci.now.sh')
-      await delay(5000)
+    it('navigates to the dapp', async function () {
+      await driver.get('http://127.0.0.1:8080/')
+      await delay(3000)
+
       let windowHandles = await driver.getAllWindowHandles()
-      await driver.switchTo().window(windowHandles[windowHandles.length - 1])
+      const popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
+
+      await driver.switchTo().window(popup)
+      await delay(2000)
       const approve = await driver.findElement(By.css('.provider_approval_actions > .btn-green'))
       await approve.click()
       await delay(1000)
@@ -262,23 +264,8 @@ describe('Metamask popup page', function () {
     })
 
     it('navigates to create token contract link', async function () {
-      const createToken = await driver.findElement(By.css('#bs-example-navbar-collapse-1 > ul > li:nth-child(3) > a'))
+      const createToken = await driver.findElement(By.css('#createToken'))
       await createToken.click()
-    })
-
-    it('adds input for token', async function () {
-      const totalSupply = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > div > div:nth-child(5) > input'))
-      const tokenName = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > div > div:nth-child(6) > input'))
-      const tokenDecimal = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > div > div:nth-child(7) > input'))
-      const tokenSymbol = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > div > div:nth-child(8) > input'))
-      const createToken = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > div > button'))
-
-      await totalSupply.sendKeys('100')
-      await tokenName.sendKeys('Test')
-      await tokenDecimal.sendKeys('0')
-      await tokenSymbol.sendKeys('TST')
-      await createToken.click()
-      await delay(1000)
     })
 
     // There is an issue with blank confirmation window in Firefox, but the button is still there and the driver is able to clicked (?.?)
@@ -294,8 +281,9 @@ describe('Metamask popup page', function () {
     it('switches back to Token Factory to grab the token contract address', async function () {
       const windowHandles = await driver.getAllWindowHandles()
       await driver.switchTo().window(windowHandles[0])
-      const tokenContactAddress = await driver.findElement(By.css('#main > div > div > div > div:nth-child(2) > span:nth-child(3)'))
-      tokenAddress = await tokenContactAddress.getText()
+      const tokenContractAddress = await driver.findElement(By.css('#tokenAddress'))
+      await driver.wait(until.elementTextMatches(tokenContractAddress, /0x/))
+      tokenAddress = await tokenContractAddress.getText()
       await delay(500)
     })
 

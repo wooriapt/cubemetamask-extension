@@ -431,7 +431,7 @@ describe('MetaMask', function () {
     it('starts a send transaction inside the dapp', async () => {
       await openNewPage(driver, 'http://127.0.0.1:8080/')
       await delay(regularDelayMs)
-      
+
       await waitUntilXWindowHandles(driver, 3)
       const windowHandles = await driver.getAllWindowHandles()
       const extension = windowHandles[0]

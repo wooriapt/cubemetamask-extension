@@ -446,21 +446,27 @@ describe('MetaMask', function () {
   })
 
   describe('Send ETH from dapp', () => {
-    it('starts a send transaction inside the dapp', async () => {
+    let windowHandles
+    let extension
+    let popup
+    let dapp
+    it('opens the dapp and approves web3 access', async () => {
       await openNewPage(driver, 'http://127.0.0.1:8080/')
       await delay(regularDelayMs)
 
       await waitUntilXWindowHandles(driver, 3)
-      let windowHandles = await driver.getAllWindowHandles()
+      windowHandles = await driver.getAllWindowHandles()
 
-      const extension = windowHandles[0]
-      const popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
-      const dapp = windowHandles.find(handle => handle !== extension && handle !== popup)
+      extension = windowHandles[0]
+      popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
+      dapp = windowHandles.find(handle => handle !== extension && handle !== popup)
 
       await delay(regularDelayMs)
       const approveButton = await findElement(driver, By.xpath(`//button[contains(text(), 'Approve')]`), 10000)
       approveButton.click()
+    })
 
+    it('initiates a send from the dapp', async () => {
       await driver.switchTo().window(dapp)
       await delay(regularDelayMs)
 
@@ -473,7 +479,9 @@ describe('MetaMask', function () {
 
       await driver.switchTo().window(windowHandles[2])
       await delay(regularDelayMs)
+    })
 
+    it('confirms the send eth transaction', async () => {
       assertElementNotPresent(webdriver, driver, By.xpath(`//li[contains(text(), 'Data')]`))
 
       const confirmButton = await findElement(driver, By.xpath(`//button[contains(text(), 'Confirm')]`), 10000)

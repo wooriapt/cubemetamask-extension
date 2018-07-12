@@ -566,7 +566,7 @@ describe('MetaMask', function () {
       await delay(regularDelayMs)
 
       await driver.switchTo().window(extension)
-      await delay(regularDelayMs)
+      await delay(largeDelayMs)
 
       await findElements(driver, By.css('.tx-list-pending-item-container'))
       const [txListValue] = await findElements(driver, By.css('.tx-list-value'))

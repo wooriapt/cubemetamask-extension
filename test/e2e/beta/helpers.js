@@ -84,11 +84,18 @@ async function openNewPage (driver, url) {
   await delay(1000)
 }
 
-async function waitUntilXWindowHandles (driver, x) {
+async function waitUntilXWindowHandles (driver, x, startTime = null) {
+  if (!startTime) {
+    startTime = (new Date()).getTime()
+  }
   const windowHandles = await driver.getAllWindowHandles()
-  if (windowHandles.length === x) return
+  if (windowHandles.length >= x) return
   await delay(1000)
-  return await waitUntilXWindowHandles(driver, x)
+  const currentTime = (new Date()).getTime()
+  if (currentTime - startTime > 15000) {
+    throw new Error(`Waiting for ${x} window handles, but only ${windowHandles.length} can be found.`)
+  }
+  return await waitUntilXWindowHandles(driver, x, startTime)
 }
 
 async function switchToWindowWithTitle (driver, title, windowHandles) {

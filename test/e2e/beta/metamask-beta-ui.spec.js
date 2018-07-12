@@ -463,7 +463,7 @@ describe('MetaMask', function () {
 
       await delay(regularDelayMs)
       const approveButton = await findElement(driver, By.xpath(`//button[contains(text(), 'Approve')]`), 10000)
-      approveButton.click()
+      await approveButton.click()
     })
 
     it('initiates a send from the dapp', async () => {
@@ -526,7 +526,7 @@ describe('MetaMask', function () {
 
     it('displays the contract creation data', async () => {
       const dataTab = await findElement(driver, By.xpath(`//li[contains(text(), 'Data')]`))
-      dataTab.click()
+      await dataTab.click()
       await (regularDelayMs)
 
       await findElement(driver, By.xpath(`//div[contains(text(), '127.0.0.1')]`))
@@ -536,7 +536,7 @@ describe('MetaMask', function () {
       assert.equal(confirmDataText.match(/0x608060405234801561001057600080fd5b5033600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff/))
 
       const detailsTab = await findElement(driver, By.xpath(`//li[contains(text(), 'Details')]`))
-      detailsTab.click()
+      await detailsTab.click()
       await (regularDelayMs)
     })
 
@@ -754,7 +754,7 @@ describe('MetaMask', function () {
 
     it('displays the token transfer data', async () => {
       const dataTab = await findElement(driver, By.xpath(`//li[contains(text(), 'Data')]`))
-      dataTab.click()
+      await dataTab.click()
       await (regularDelayMs)
 
       const functionType = await findElement(driver, By.css('.confirm-page-container-content__function-type'))
@@ -766,7 +766,7 @@ describe('MetaMask', function () {
       assert.equal(confirmDataText.match(/0xa9059cbb0000000000000000000000002f318c334780961fb129d2a6c30d0763d9a5c97/))
 
       const detailsTab = await findElement(driver, By.xpath(`//li[contains(text(), 'Details')]`))
-      detailsTab.click()
+      await detailsTab.click()
       await (regularDelayMs)
     })
 

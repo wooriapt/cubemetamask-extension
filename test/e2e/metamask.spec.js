@@ -11,7 +11,7 @@ const { delay, buildChromeWebDriver, buildFirefoxWebdriver, installWebExt, getEx
 describe('Metamask popup page', function () {
   let driver, accountAddress, tokenAddress, extensionId
 
-  this.timeout(0)
+  this.timeout(30000)
 
   before(async function () {
     if (process.env.SELENIUM_BROWSER === 'chrome') {

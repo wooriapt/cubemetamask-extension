@@ -246,7 +246,6 @@ describe('Metamask popup page', function () {
 
   describe('Token Factory', function () {
     let windowHandles
-    let popup
     let dapp
     it('approves web3 access', async () => {
       await driver.get('http://127.0.0.1:8080/')
@@ -255,8 +254,7 @@ describe('Metamask popup page', function () {
       await waitUntilXWindowHandles(driver, 2)
       windowHandles = await driver.getAllWindowHandles()
 
-      popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
-      dapp = windowHandles.find(handle => handle !== popup)
+      dapp = await switchToWindowWithTitle(driver, 'E2E Test Dapp', windowHandles)
       await delay(400)
 
       const approveButton = await driver.wait(until.elementLocated(By.xpath(`//button[contains(text(), 'APPROVE')]`)), 10000)

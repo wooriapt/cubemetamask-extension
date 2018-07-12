@@ -474,6 +474,8 @@ describe('MetaMask', function () {
       await send3eth.click()
       await delay(regularDelayMs)
 
+      windowHandles = await driver.getAllWindowHandles()
+      console.log(`windowHandles1`, windowHandles);
       await waitUntilXWindowHandles(driver, 3)
       windowHandles = await driver.getAllWindowHandles()
 

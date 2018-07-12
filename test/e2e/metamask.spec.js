@@ -245,20 +245,25 @@ describe('Metamask popup page', function () {
   })
 
   describe('Token Factory', function () {
-    it('creates a new token', async () => {
+    let windowHandles
+    let popup
+    let dapp
+    it('approves web3 access', async () => {
       await driver.get('http://127.0.0.1:8080/')
       await delay(1000)
 
       await waitUntilXWindowHandles(driver, 2)
-      let windowHandles = await driver.getAllWindowHandles()
+      windowHandles = await driver.getAllWindowHandles()
 
-      const popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
-      const dapp = windowHandles.find(handle => handle !== popup)
+      popup = await switchToWindowWithTitle(driver, 'MetaMask Notification', windowHandles)
+      dapp = windowHandles.find(handle => handle !== popup)
       await delay(400)
 
       const approveButton = await driver.wait(until.elementLocated(By.xpath(`//button[contains(text(), 'APPROVE')]`)), 10000)
       approveButton.click()
+    })
 
+    it('initiates token creation in the dapp', async () => {
       await delay(400)
       await driver.switchTo().window(dapp)
       await delay(400)
@@ -266,21 +271,24 @@ describe('Metamask popup page', function () {
       const createToken = await driver.wait(until.elementLocated(By.xpath(`//button[contains(text(), 'Create Token')]`)), 10000)
       await createToken.click()
       await delay(400)
+    })
 
+    it('confirms token creation', async () => {
       windowHandles = await driver.getAllWindowHandles()
       await driver.switchTo().window(windowHandles[windowHandles.length - 1])
       const byMetamaskSubmit = By.css('#pending-tx-form > div.flex-row.flex-space-around.conf-buttons > input')
       const metamaskSubmit = await driver.wait(until.elementLocated(byMetamaskSubmit))
       await metamaskSubmit.click()
       await delay(1000)
+    })
 
+    it('gets the token contract address', async () => {
       await driver.switchTo().window(dapp)
       await delay(200)
 
       const tokenContractAddress = await driver.wait(until.elementLocated(By.css('#tokenAddress')), 10000)
       await driver.wait(until.elementTextMatches(tokenContractAddress, /0x/))
       tokenAddress = await tokenContractAddress.getText()
-
     })
 
     it('navigates back to MetaMask popup in the tab', async function () {

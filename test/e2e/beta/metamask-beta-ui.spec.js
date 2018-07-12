@@ -474,19 +474,15 @@ describe('MetaMask', function () {
       await send3eth.click()
       await delay(regularDelayMs)
 
-      windowHandles = await driver.getAllWindowHandles()
-      console.log(`windowHandles1`, windowHandles);
-      await waitUntilXWindowHandles(driver, 3)
-      windowHandles = await driver.getAllWindowHandles()
-
-      await driver.switchTo().window(windowHandles[2])
+      await driver.switchTo().window(extension)
+      await loadExtension(driver, extensionId)
       await delay(regularDelayMs)
     })
 
     it('confirms the send eth transaction', async () => {
+      const confirmButton = await findElement(driver, By.xpath(`//button[contains(text(), 'Confirm')]`), 10000)
       assertElementNotPresent(webdriver, driver, By.xpath(`//li[contains(text(), 'Data')]`))
 
-      const confirmButton = await findElement(driver, By.xpath(`//button[contains(text(), 'Confirm')]`), 10000)
       await confirmButton.click()
       await delay(regularDelayMs)
 

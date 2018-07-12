@@ -44,7 +44,7 @@ describe('Metamask popup page', function () {
     }
     // gather extra data if test failed
     if (this.currentTest.state === 'failed') {
-      await verboseReportOnFailure(this.currentTest)
+      await verboseReportOnFailure(driver, this.currentTest)
     }
   })
 
@@ -351,7 +351,7 @@ describe('Metamask popup page', function () {
     return matchedErrorObjects
   }
 
-  async function verboseReportOnFailure (test) {
+  async function verboseReportOnFailure (driver, test) {
     let artifactDir
     if (process.env.SELENIUM_BROWSER === 'chrome') {
       artifactDir = `./test-artifacts/chrome/${test.title}`
